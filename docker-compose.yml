@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs
+      - DEFAULT_REGION=us-east-1
+    # Simple logic to create queue once started
+    entrypoint: >
+      /bin/bash -c "
+      (sleep 15 && awslocal sqs create-queue --queue-name order-queue) &
+      exec /usr/local/bin/docker-entrypoint.sh"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - SQS_QUEUE_URL=http://localstack:4566/000000000000/order-queue
+      - MONGO_URI=mongodb://db:27017/order_db
+      - MONGO_DB_NAME=order_db
+      - SQS_POLLING_INTERVAL_SECONDS=5
+    depends_on:
+      localstack:
+        condition: service_healthy
+      db:
+        condition: service_healthy
