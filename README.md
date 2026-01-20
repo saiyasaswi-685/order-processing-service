@@ -1,5 +1,3 @@
-Nuvvu adigina vidhanga, README file lo headings clear ga kanipistu, commands anni suluvuga copy cheskone la (Markdown code blocks upayoginchi) ikkada set chesa. Idhi direct ga README.md lo petteyochu.
-
 📦 Order Processing Service (Event-Driven)
 A robust, production-ready backend service that consumes order events from AWS SQS, processes them with Idempotency logic, and persists data into MongoDB.
 🚀 Overview
