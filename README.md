@@ -1,6 +1,7 @@
-Order Processing Service (Event-Driven)
-A robust, production-ready backend service that consumes order events from AWS SQS, processes them with Idempotency logic, and persists data into MongoDB.
+Nuvvu adigina vidhanga, README file lo headings clear ga kanipistu, commands anni suluvuga copy cheskone la (Markdown code blocks upayoginchi) ikkada set chesa. Idhi direct ga README.md lo petteyochu.
 
+📦 Order Processing Service (Event-Driven)
+A robust, production-ready backend service that consumes order events from AWS SQS, processes them with Idempotency logic, and persists data into MongoDB.
 🚀 Overview
 This service is designed using an event-driven architecture to handle high-volume e-commerce order streams. It focuses on:
 
@@ -33,7 +34,7 @@ Create a .env file based on the .env.example template:
 Bash
 
 cp .env.example .env
-Ensure the SQS_QUEUE_URL and MONGO_URI are configured to point to the services defined in docker-compose.yml.
+Note: Ensure the SQS_QUEUE_URL and MONGO_URI point to the services defined in docker-compose.yml.
 
 3. Run with Docker (One-Command Setup)
 Start the entire stack (App, MongoDB, Localstack) with a single command:
@@ -55,17 +56,18 @@ Bash
 
 docker exec -it $(docker ps -qf "name=app") python3 tests/integration/test_advanced_flow.py
 📐 Design Decisions
-Idempotency: We use the order_id as the primary key (_id) in MongoDB. Before processing an event, the service checks the database state. If an order with that ID is already marked as PROCESSED, the service skips the business logic and acknowledges/deletes the SQS message to ensure exactly-once semantics.
+Idempotency: We use the order_id as the primary key (_id) in MongoDB. Before processing, the service checks the DB state. If an order is already PROCESSED, the service skips logic and deletes the SQS message.
 
-Schema Validation: Every message is validated against a formal JSON schema (OrderEvent). Messages failing validation are logged as errors and are not deleted, allowing for retries or Dead-Letter Queue (DLQ) handling.
+Schema Validation: Every message is validated against a formal JSON schema (OrderEvent). Failed messages are logged as errors and not deleted, allowing for retries.
 
-Error Handling: Implemented a non-blocking consumer. Exceptions during processing trigger an automatic retry via SQS visibility timeouts, ensuring no data loss.
+Error Handling: Exceptions trigger an automatic retry via SQS visibility timeouts, ensuring no data loss.
 
-Structured Logging: Adopted a JSON logging format (using JsonFormatter) to include contextual data like order_id, making the service compatible with modern log aggregation tools.
+Structured Logging: Adopted a JSON logging format (using JsonFormatter) for better integration with log aggregation tools.
 
 📡 API Endpoints
-GET /health: Returns the operational status and connectivity to dependencies.
+GET /health
+Returns the operational status and connectivity to dependencies.
 
 200 OK: {"status": "healthy", "sqs_connected": true, "db_connected": true}
 
-503 Service Unavailable: If any critical dependency (SQS/DB) is disconnected.
+503 Service Unavailable: If SQS or DB is disconnected.
