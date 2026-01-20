@@ -1,4 +1,5 @@
 
+
 ```markdown
 # 📦 Order Processing Service (Event-Driven)
 
@@ -7,7 +8,7 @@
 ---
 
 ## 🚀 Overview
-This service is designed using an event-driven architecture to handle high-volume e-commerce order streams. It focuses on:
+This service is designed using an event-driven architecture to handle high-volume e-commerce order streams.
 * **Reliability**: Ensuring no message is lost during processing by leveraging SQS visibility timeouts.
 * **Consistency**: Using a strict idempotency mechanism to prevent duplicate orders.
 * **Observability**: Implementing structured JSON logging for professional-grade monitoring.
@@ -28,7 +29,7 @@ This service is designed using an event-driven architecture to handle high-volum
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/saiyasaswi-685/order-processing-service](https://github.com/saiyasaswi-685/order-processing-service)
+git clone https://github.com/saiyasaswi-685/order-processing-service
 cd order-processing-service
 
 ```
@@ -92,3 +93,8 @@ Returns the operational status and connectivity to dependencies.
 
 * **200 OK**: `{"status": "healthy", "sqs_connected": true, "db_connected": true}`
 * **503 Service Unavailable**: If SQS or DB is disconnected.
+
+```
+
+---
+
